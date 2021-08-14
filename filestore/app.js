@@ -12,9 +12,9 @@ app.get('/files', async (req, res) => {
     res.send({ list: await getFileList() })
 })
 
-app.get('/file', (req, res) => {
+app.get('/file/:fileName', async (req, res) => {
     res.type(fileMimeType)
-    res.send(getFile())
+    res.send(await getFile(req))
 })
 
 app.post('/file', (req, res) => {
