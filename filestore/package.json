@@ -1,0 +1,16 @@
+{
+  "name": "filestore",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ivicz László",
+  "license": "ISC",
+  "dependencies": {
+    "@azure/storage-blob": "^12.7.0",
+    "express": "^4.17.1"
+  }
+}
