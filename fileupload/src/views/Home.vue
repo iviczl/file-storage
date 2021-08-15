@@ -1,16 +1,17 @@
 <template>
     <div>
         <measurement-details :active="isDetailsOn" :message="message" :ok="true" @modal-ok="detailsClose" />
-        <!-- <div class="filter-line">
-            <datetime-input class="filter-item" label="Kezdő" v-model="startDate" @input="filterChanged"  name="start" />
+        <div class="filter-line">
+           <!-- <datetime-input class="filter-item" label="Kezdő" v-model="startDate" @input="filterChanged"  name="start" />
             <datetime-input class="filter-item" label="Végző" v-model="endDate" @input="filterChanged"  name="end" />
             <text-input class="filter-item" label="JSN"  :value="jsn" :size="15" :maxLength="15" @input="jsnChanged($event)"/>
             <select-input class="filter-item" label="Állomás"  :value="shopId" :size="1" :items="shopList" emptyText="nincs megadva" @input="shopSelected($event)"/>
             <select-input class="filter-item" label="Mérési pont"  :value="measurementPointId" :size="1" :items="measurementPointList" emptyText="nincs megadva" @input="measurementPointSelected($event)"/>
             <div class="pager">
                 <pager :totalCount="pagination.totalItemCount" :pageSize="pagination.pageSize" :page="pagination.page" @page-previous="getDataPage" @page-next="getDataPage"/>
-            </div>
-        </div> -->
+            </div> -->
+            
+        </div>
         <grid-table v-if="fileData.length > 0" key="measurements" ref="data" :columns="tableCols()" :rows="tableRows()"  
             @link-clicked="showLink($event)" :tableHeight="600" :fontSize="0.9" />
     </div>
@@ -38,7 +39,7 @@ export default {
     },
     data() {
         return {
-            // startDate: backByDays(10000, this.endDate),
+            isSaving: false,
             // endDate: new Date(),
             // jsn: null,
             // shopId: null,
