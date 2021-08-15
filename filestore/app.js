@@ -1,26 +1,40 @@
 import express from 'express'
-import {getFile, getFileList, storeFile}  from './modules/storageHandler.js'
+import cors from 'cors'
+import { loadSettings } from './modules/util.js'
+import {getFile, getFileList, storeFile, getLink}  from './modules/storageHandler.js'
 const fileMimeType = 'application/octet-stream'
 const listMimeType = 'application/json'
-const app = express()
-//app.use(express.json)
-app.use(express.raw({limit: '3mb', type: fileMimeType}))
-const port = 3000
+let settings
 
-app.get('/files', async (req, res) => {
-    res.type(listMimeType)
-    res.send({ list: await getFileList() })
-})
+(async function() {
+    settings = loadSettings('./appSettings.json')
+    const app = express()
+    //app.use(express.json)
+    app.use(cors({
+        origin: '*'
+    }));
 
-app.get('/file/:fileName', async (req, res) => {
-    res.type(fileMimeType)
-    res.send(await getFile(req))
-})
+    app.use(express.raw({limit: settings.requestLimit, type: fileMimeType}))
 
-app.post('/file', (req, res) => {
-    res.send(storeFile(req))
-})
+    app.get('/files', async (req, res) => {
+        res.type(listMimeType)
+        res.send({ list: await getFileList() })
+    })
 
-app.listen(port, () => {
-  console.log(`File storage app listening at http://localhost:${port}`)
-})
+    app.get('/file/:fileName', async (req, res) => {
+        res.type(fileMimeType)
+        res.send(await getFile(req))
+    })
+
+    app.post('/file', (req, res) => {
+        res.send(storeFile(req))
+    })
+
+    app.get('/link/:fileName', (req, res) => {
+        res.send(getLink(req, settings.accountName, settings.accountKey, settings.blobEndpoint, settings.containerName))
+    })
+
+    app.listen(settings.port, () => {
+    console.log(`File storage app listening at http://localhost:${settings.port}`)
+    })
+})()
