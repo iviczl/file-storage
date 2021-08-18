@@ -6,49 +6,44 @@ const fileMimeType = 'application/octet-stream'
 const listMimeType = 'application/json'
 let settings
 
-(async function() {
-    settings = loadSettings('./appSettings.json')
-    const app = express()
-    //app.use(express.json)
-    app.use(cors({
-        origin: '*'
-    }));
+settings = loadSettings('./appSettings.json')
+const app = express()
+//app.use(express.json)
+app.use(cors({
+    origin: '*'
+}));
 
-    app.use(express.raw({ limit: settings.requestLimit, type: fileMimeType }))
+app.use(express.raw({ limit: settings.requestLimit, type: fileMimeType }))
 
-    function sendResponse(responseObject, result) {
-        if(typeof result === 'undefined' ) {
-            responseObject.status(500).send('error')
-            return
-        }
-        responseObject.send(result)
+function sendResponse(responseObject, result) {
+    if(typeof result === 'undefined' ) {
+        responseObject.status(500).send('error')
+        return
     }
+    responseObject.send(result)
+}
 
-    app.get('/files', async (req, res) => {
-        res.type(listMimeType)
-        const list = await getFileList() || []
+app.get('/files', async (req, res) => {
+    res.type(listMimeType)
+    const list = await getFileList() || []
+    sendResponse(res, { list })
+})
 
-        sendResponse(res, { list })
-        // res.send({ list: await getFileList() })
-    })
+// app.get('/file/:fileName', async (req, res) => {
+//     res.type(fileMimeType)
+//     sendResponse(res, await getFile(req))
+// })
 
-    app.get('/file/:fileName', async (req, res) => {
-        res.type(fileMimeType)
-        sendResponse(res, await getFile(req))
-        // res.send(await getFile(req))
-    })
+app.post('/file', async (req, res) => {
+    sendResponse(res, await storeFile(req))
+})
 
-    app.post('/file', async (req, res) => {
-        sendResponse(res, await storeFile(req))
-        // res.send(storeFile(req))
-    })
+app.get('/link/:fileName', (req, res) => {
+    sendResponse(res, getLink(req, settings.accountName, settings.accountKey, settings.blobEndpoint, settings.containerName))
+})
 
-    app.get('/link/:fileName', (req, res) => {
-        sendResponse(res, getLink(req, settings.accountName, settings.accountKey, settings.blobEndpoint, settings.containerName))
-        // res.send(getLink(req, settings.accountName, settings.accountKey, settings.blobEndpoint, settings.containerName))
-    })
+let server = app.listen(settings.port, () => {
+console.log(`File storage app listening at http://localhost:${settings.port}`)
+})
 
-    app.listen(settings.port, () => {
-    console.log(`File storage app listening at http://localhost:${settings.port}`)
-    })
-})()
+export default server 

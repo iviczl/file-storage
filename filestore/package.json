@@ -5,13 +5,18 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --timeout 10000"
   },
   "author": "Ivicz László",
   "license": "ISC",
   "dependencies": {
     "@azure/storage-blob": "^12.7.0",
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "faker": "^5.5.3",
+    "mocha": "^9.0.3",
+    "sinon": "^11.1.2"
   }
 }

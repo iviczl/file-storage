@@ -5,10 +5,10 @@
 		<h1 class="has-text-centered is-size-5">{{title}}</h1>
         <p v-for="line in message" :key="line.key" class="section">{{line.key}}: {{line.value}}</p>
 		<p class="section">
-			<a class="button" @click="okClick" v-if="ok">Rendben</a>
-			<a class="button" @click="okClick" v-if="yes">Igen</a>
-			<a class="button" @click="cancelClick" v-if="no">Nem</a>
-			<a class="button" @click="cancelClick" v-if="cancel">Mégsem</a>
+			<a class="button" @click="okClick" v-if="ok">OK</a>
+			<a class="button" @click="okClick" v-if="yes">Yes</a>
+			<a class="button" @click="cancelClick" v-if="no">No</a>
+			<a class="button" @click="cancelClick" v-if="cancel">Cancel</a>
 		</p>
 
     </div>
