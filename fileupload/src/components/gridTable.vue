@@ -62,8 +62,8 @@
         </td>
         <td v-for="column in columns" :key="column.name" :style="cellStyle(column, row)">
           <template v-if="column.type === 'link'">
-            <a @click.prevent="!isDisabled ? fileOpen(row.find(el => { return el.name === column.name;}).value) : null" >
-            {{ row.find(el => { return el.name === column.name;}).value }}
+            <a @click.prevent="!isDisabled ? fileOpen(field(row, column.name).value) : null" >
+            {{ field(row, column.name).title || column.fieldTitle || field(row, column.name).value }}
             </a>
           </template>
           <template v-else>
@@ -391,6 +391,9 @@ export default {
     this.$refs.table = null;
   },
   methods: {
+    field(row, name) {
+      return row.find(el => { return el.name === name; });
+    },
     textWidth(text) {
       let metrics = this.context.measureText(text + 'm');
       return metrics.width;

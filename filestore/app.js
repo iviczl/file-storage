@@ -14,24 +14,38 @@ let settings
         origin: '*'
     }));
 
-    app.use(express.raw({limit: settings.requestLimit, type: fileMimeType}))
+    app.use(express.raw({ limit: settings.requestLimit, type: fileMimeType }))
+
+    function sendResponse(responseObject, result) {
+        if(typeof result === 'undefined' ) {
+            responseObject.status(500).send('error')
+            return
+        }
+        responseObject.send(result)
+    }
 
     app.get('/files', async (req, res) => {
         res.type(listMimeType)
-        res.send({ list: await getFileList() })
+        const list = await getFileList() || []
+
+        sendResponse(res, { list })
+        // res.send({ list: await getFileList() })
     })
 
     app.get('/file/:fileName', async (req, res) => {
         res.type(fileMimeType)
-        res.send(await getFile(req))
+        sendResponse(res, await getFile(req))
+        // res.send(await getFile(req))
     })
 
-    app.post('/file', (req, res) => {
-        res.send(storeFile(req))
+    app.post('/file', async (req, res) => {
+        sendResponse(res, await storeFile(req))
+        // res.send(storeFile(req))
     })
 
     app.get('/link/:fileName', (req, res) => {
-        res.send(getLink(req, settings.accountName, settings.accountKey, settings.blobEndpoint, settings.containerName))
+        sendResponse(res, getLink(req, settings.accountName, settings.accountKey, settings.blobEndpoint, settings.containerName))
+        // res.send(getLink(req, settings.accountName, settings.accountKey, settings.blobEndpoint, settings.containerName))
     })
 
     app.listen(settings.port, () => {

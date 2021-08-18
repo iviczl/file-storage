@@ -1,95 +1,67 @@
 <template>
     <div class="dropbox">
-        <input type="file" :disabled="isSaving" @change="fileSelected($event.target.name, $event.target.files)" class="input-file">
-        <p v-if="!isEmpty">Húzd ide a file-t vagy klikkolj!</p>
-        <p v-if="isSaving">Feltöltés...</p>
+        <input type="file" :disabled="isSaving" @change="fileSelected($event.target.files)" class="input-file">
+        <p v-if="isInitial">Drag your file here to upload<br> or click to browse</p>
+        <p v-if="isSaving">Uploading...</p>
+        <p v-if="isFailed">{{error}}</p>
+        <p v-if="isSuccess">Succeeded</p>
     </div>
 </template>
 
 <script>
-  import { upload } from './file-upload.service';
 
   const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
   export default {
-    name: 'app',
+    name: 'fileInput',
+    props: {
+      status: Number,
+      errorText: String
+    },
     data() {
       return {
-        uploadedFiles: [],
         uploadError: null,
-        currentStatus: null,
-        uploadFieldName: 'photos'
+        currentStatus: null
       }
     },
     computed: {
+      error() {
+        return this.errorText;
+      },
       isInitial() {
-        return this.currentStatus === STATUS_INITIAL;
+        return this.status == STATUS_INITIAL;
       },
       isSaving() {
-        return this.currentStatus === STATUS_SAVING;
+        return this.status == STATUS_SAVING;
       },
       isSuccess() {
-        return this.currentStatus === STATUS_SUCCESS;
+        return this.status == STATUS_SUCCESS;
       },
       isFailed() {
-        return this.currentStatus === STATUS_FAILED;
+        return this.status == STATUS_FAILED;
       }
     },
     methods: {
-      reset() {
-        // reset form to initial state
-        this.currentStatus = STATUS_INITIAL;
-        this.uploadedFiles = [];
-        this.uploadError = null;
-      },
-      save(formData) {
-        // upload data to the server
-        this.currentStatus = STATUS_SAVING;
-
-        upload(formData)
-          .then(x => {
-            this.uploadedFiles = [].concat(x);
-            this.currentStatus = STATUS_SUCCESS;
-          })
-          .catch(err => {
-            this.uploadError = err.response;
-            this.currentStatus = STATUS_FAILED;
-          });
-      },
-      filesChange(fieldName, fileList) {
-        // handle file changes
-        const formData = new FormData();
-
+      fileSelected(fileList) {
         if (!fileList.length) return;
-
-        // append the files to FormData
-        Array
-          .from(Array(fileList.length).keys())
-          .map(x => {
-            formData.append(fieldName, fileList[x], fileList[x].name);
-          });
-
-        // save it
-        this.save(formData);
+        this.$emit('file-save', fileList[0]);
       }
-    },
-    mounted() {
-      this.reset();
-    },
+    }
   }
 
 </script>
 
-<style lang="scss">
+<style >
   .dropbox {
     outline: 2px dashed grey; /* the dash box */
     outline-offset: -10px;
     background: lightcyan;
     color: dimgray;
     padding: 10px 10px;
-    min-height: 200px; /* minimum height */
+    min-height: 200px ; /* minimum height */
     position: relative;
     cursor: pointer;
+    overflow-wrap: normal;
   }
 
   .input-file {

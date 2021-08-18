@@ -1,8 +1,12 @@
-import {postJson, putJson, deleteJson} from './http.js';
+import {postJson, putJson, deleteJson, postBlob} from './http.js';
 
-let createEntity = async function(url, data) {
+let postFile = async function(url, data, headers) {
   let uri = window.Config.serviceUrl + url;
-  let headers = {};
+  return postBlob(uri, data, headers);
+}
+
+let createEntity = async function(url, data, headers = {}) {
+  let uri = window.Config.serviceUrl + url;
   return postJson(uri, data, headers);
 }
 
@@ -21,5 +25,6 @@ let deleteEntity = async function(url, data) {
 export {
   createEntity,
   updateEntity,
-  deleteEntity
+  deleteEntity,
+  postFile
 }

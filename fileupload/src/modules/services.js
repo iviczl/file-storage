@@ -1,6 +1,7 @@
 // import listGetter from '@/modules/listGetter.js';
 // import { updateEntity } from '@/modules/dataPutter.js';
 import { getData } from '@/modules/dataGetter';
+import { postFile } from '@/modules/dataPutter';
 // import { getData, getEntity } from '@/modules/dataGetter';
 
 let fileService = {
@@ -8,13 +9,16 @@ let fileService = {
   //   return listGetter.getGeneralList('measurement/list', { startDate, endDate, jsn, shopId, measurementPointId }, true, page, pageSize, orderBy)
   // },
   async getFiles() {
-    return getData('files')
+    return getData('files');
   },
   // async updateMeasurement(id, vehicleId, shopId, measurementPointId, date, gap, flush) {
   //   return updateEntity('measurement/update', { id, vehicleId, shopId, measurementPointId, date, gap, flush })
   // },
   async getLink(fileName) {
-    return getData('link/' + fileName, null, 'text')
+    return getData('link/' + fileName, null, 'text');
+  },
+  async postFile(file) {
+    return postFile('file', file, { 'filename': file.name });
   }
 }
 

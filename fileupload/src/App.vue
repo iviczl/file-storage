@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="app">
     <p class="wide">
-      <router-link class="menu-link" to="/">Kezdőlap</router-link>
+      <router-link class="menu-link" to="/">Home</router-link>
       <router-link class="menu-link" to="/about">About</router-link>
     </p>
     <router-view />

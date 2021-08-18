@@ -31,6 +31,48 @@ async function getBlob(url = '', data = null, headers = {}) {
   return doFetch(url, null, 'GET', headers, 'blob');
 }
 
+async function postBlob(url = '', data = null, headers = {}) {
+  return postBinary(url, data, headers);  
+}
+
+async function postBinary(url = '', data = {}, headers = {}, responseType = 'json') {
+  url = !url.startsWith('http') ? 'http://' + url : url;
+  const response = await fetch(url, {
+    method: 'POST',
+    mode: 'cors', // no-cors, cors, *same-origin
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/octet-stream',
+      ...headers
+    },
+    redirect: 'follow', // manual, *follow, error
+    referrer: 'no-referrer', // no-referrer, *client
+    body: data // body data type must match "Content-Type" header
+  });
+  if(response.status < 200 || response.status > 299) {
+    console.warn(await response.text());
+    return null;
+  }
+  try {
+    const resultData = responseType ? 
+      (responseType === 'json' ? response.json() : response.text())
+      : response.json();
+    const dispositionHeader = response.headers.values('Content-Disposition');
+    const disposition = dispositionHeader? dispositionHeader.next().value : '';
+    const result = { disposition: disposition, data: resultData };
+    attempt = 5;
+    return result;
+  } catch (error) {
+    // debugger;
+    if (attempt == 0) {
+      throw new TypeError('error: ' + error);
+    }
+    attempt--;
+    return postBinary(url, data, headers, responseType);
+  }
+}
+
 async function doFetch(url = '', data = {}, verb = 'GET', headers = {}, responseType = 'json') {
   url = !url.startsWith('http') ? 'http://' + url : url;
   const response = await fetch(url, {
@@ -78,5 +120,6 @@ export {
   postText,
   getJson,
   deleteJson,
-  getBlob
+  getBlob,
+  postBlob
 };
